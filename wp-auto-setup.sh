@@ -8,12 +8,16 @@ echo "Enter some arguments for installation."
 
 while true; do
 
-	echo -n "Target directory? (e.g., /path/to/wordpress) : "
+	echo -n "Target directory? (default = current directory) : "
 	read TARGET_DIR
 	
 	if [ ! -d $TARGET_DIR ]; then
 		echo "Target directory doesn't exist! Try again."
+	elif [ ! $TARGET_DIR ]; then
+		TARGET_DIR=$(cd $(dirname $0);pwd)
+		break
 	else
+		TARGET_DIR=${TARGET_DIR%/}
 		break
 	fi
 
@@ -53,10 +57,7 @@ read IMPORT_DATA
 #
 # Replace strings and assign variables.
 #
-TARGET_DIR=${TARGET_DIR%/}
-DOCUMENT_ROOT=${TARGET_DIR##*/}
 SITE_URL=${SITE_URL%/}
-SERVER_NAME=${SITE_URL#http*//}
 
 if [ ! $DB_HOST ]; then
 	DB_HOST="localhost"
@@ -71,7 +72,7 @@ echo ""
 wp core download --locale=ja
 wp core config --dbhost=$DB_HOST --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --locale=ja
 wp core install --url=$SITE_URL --title="$SITE_TITLE" --admin_user=$ADMIN_NAME --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL
-wp plugin activate wp-multibyte-patch
+wp plugin delete hello
 
 
 #
@@ -88,8 +89,9 @@ done
 # Download and import theme unit data.
 #
 if [ "$IMPORT_DATA" = "y" -o "$IMPORT_DATA" = "yes" ]; then
+	wp plugin install wordpress-importer --activate
 	wget --no-check-certificate https://raw.githubusercontent.com/jawordpressorg/theme-test-data-ja/master/wordpress-theme-test-data-ja.xml
-	wp import --authors=skip wordpress-theme-test-date-ja.xml
+	wp import wordpress-theme-test-data-ja.xml --authors=skip
 	rm -f wordpress-theme-test-date-ja.xml
 fi
 
