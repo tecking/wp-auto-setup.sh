@@ -10,7 +10,7 @@ PLUGIN=""
 #
 # Enter arguments.
 #
-echo "Enter some arguments for installation."
+echo "Enter some values for installation."
 
 while true; do
 
