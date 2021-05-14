@@ -1,5 +1,11 @@
 #!/bin/sh
 
+#
+# Initialize.
+# - Set value that slug of the plugin(s) you want to install.
+#
+PLUGIN=""
+
 
 #
 # Enter arguments.
@@ -22,6 +28,9 @@ while true; do
 	fi
 
 done
+
+echo -n "Locale? (default = en-US) : "
+read LOCALE
 
 echo -n "DB host? (default = localhost) : "
 read DB_HOST
@@ -63,26 +72,34 @@ if [ ! $DB_HOST ]; then
 	DB_HOST="localhost"
 fi
 
+if [ $LOCALE ]; then
+	OPTION_LOCALE="--locale=$LOCALE"
+else
+	OPTION_LOCALE=""
+fi
+
 
 #
 # Setup WordPress.
 #
 cd $TARGET_DIR
 echo ""
-wp core download --locale=ja
-wp core config --dbhost=$DB_HOST --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --locale=ja
+wp core download $OPTION_LOCALE
+wp core config --dbhost=$DB_HOST --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD $OPTION_LOCALE
 wp core install --url=$SITE_URL --title="$SITE_TITLE" --admin_user=$ADMIN_NAME --admin_password=$ADMIN_PASSWORD --admin_email=$ADMIN_EMAIL
-wp plugin delete hello
 
 
 #
 # Download and activate plugins.
 #
-PLUGIN="wp-multibyte-patch"
-for I in $PLUGIN
+if [ "$LOCALE" = "ja" ]; then
+	PLUGIN="$PLUGIN wp-multibyte-patch"
+fi
+for I in PLUGIN
 do
 	wp plugin install $I --activate
 done
+wp plugin delete hello-dolly
 
 
 #
