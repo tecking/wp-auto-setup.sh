@@ -14,7 +14,7 @@ echo "Enter some values for installation."
 
 while true; do
 
-	echo -n "Target directory? (default = current directory) : "
+	echo -n "Target directory? (default = same directory as the script) : "
 	read TARGET_DIR
 	
 	if [ ! -d $TARGET_DIR ]; then
