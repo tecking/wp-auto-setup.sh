@@ -14,16 +14,12 @@ echo "Enter some values for installation."
 
 while true; do
 
-	echo -n "Target directory? (default = same directory as the script) : "
+	echo -n "Target directory? (e.g., /path/to/wordpress) : "
 	read TARGET_DIR
 	
 	if [ ! -d $TARGET_DIR ]; then
 		echo "Target directory doesn't exist! Try again."
-	elif [ ! $TARGET_DIR ]; then
-		TARGET_DIR=$(cd $(dirname $0);pwd)
-		break
 	else
-		TARGET_DIR=${TARGET_DIR%/}
 		break
 	fi
 
