@@ -95,7 +95,7 @@ for I in PLUGIN
 do
 	wp plugin install $I --activate
 done
-wp plugin delete hello-dolly
+wp plugin delete hello
 
 
 #
